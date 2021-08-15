@@ -38,9 +38,15 @@ class FedOptAggregator(object):
             self.flag_client_model_uploaded_dict[idx] = False
 
     def _instantiate_opt(self):
-        return OptRepo.name2cls(self.args.server_optimizer)(
-            filter(lambda p: p.requires_grad, self.get_model_params()), lr=self.args.server_lr, momentum=self.args.server_momentum,
+        # adam has no momentum
+        if self.args.server_optimizer.lower == 'adam':
+            return OptRepo.name2cls(self.args.server_optimizer)(
+            filter(lambda p: p.requires_grad, self.get_model_params()), lr=self.args.server_lr,
         )
+        else:
+            return OptRepo.name2cls(self.args.server_optimizer)(
+                filter(lambda p: p.requires_grad, self.get_model_params()), lr=self.args.server_lr, momentum=self.args.server_momentum,
+            )
         
     def get_model_params(self):
         # return model parameters in type of generator
