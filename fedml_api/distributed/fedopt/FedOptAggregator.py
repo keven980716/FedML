@@ -39,7 +39,7 @@ class FedOptAggregator(object):
 
     def _instantiate_opt(self):
         # adam has no momentum
-        if self.args.server_optimizer.lower == 'adam':
+        if self.args.server_optimizer.lower() == 'adam':
             return OptRepo.name2cls(self.args.server_optimizer)(
             filter(lambda p: p.requires_grad, self.get_model_params()), lr=self.args.server_lr,
         )
